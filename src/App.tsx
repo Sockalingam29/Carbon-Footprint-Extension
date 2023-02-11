@@ -19,7 +19,6 @@ function getCookie(cname: string) {
   return "";
 }
 
-let sessionSet = false
 
 export default function App() {
   const [responseFromContent, setResponseFromContent] = React.useState(0);
@@ -59,20 +58,20 @@ export default function App() {
             (response: ChromeMessageResponse) => {
               console.log(response);
               let currPageSize = response.transferSize;
-              let totalSize = sessionStore
               console.log("currPageSize "+currPageSize+" responseFromContent "+responseFromContent)
-              if(!sessionSet && currPageSize!=0){
-              totalSize += currPageSize;
-                sessionSet = true
-            }
 
               setResponseFromContent(currPageSize);
               // setPrevSessionStore(currPageSize)
 
-              setSessionStore(totalSize);
-              document.cookie = "dataConsumed="+totalSize;
+              if(sessionStorage.getItem("isUpdated")==null) {
+                console.log(sessionStorage.getItem("isUpdated"))
+                let totalSize = sessionStore+currPageSize;
+                setSessionStore(totalSize);
+                document.cookie = "dataConsumed="+totalSize;
+                sessionStorage.setItem("isUpdated","true")
+              }
 
-              console.log("Values "+" "+currPageSize+" "+totalSize);
+              console.log("Values "+" "+currPageSize);
               console.log("cookie "+getCookie('dataConsumed'));
               // chrome.storage?.session?.set({ usedData: totalSize });
             }
