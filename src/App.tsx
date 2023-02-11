@@ -5,7 +5,7 @@ import { ChromeMessage, ChromeMessageResponse } from "./types";
 import './App.css';
 
 export default function App () {
-  const [responseFromContent,setResponseFromContent] = React.useState('');
+  const [responseFromContent,setResponseFromContent] = React.useState(0);
 
   React.useEffect(() => {
     /**
@@ -27,7 +27,8 @@ export default function App () {
         tabs[0].id || 0,
         { type: 'GET_DOM' } as ChromeMessage,
         (response: ChromeMessageResponse) => {
-          setResponseFromContent(response.text)
+          console.log(response)
+          setResponseFromContent(response.transferSize)
         });
     });
   });

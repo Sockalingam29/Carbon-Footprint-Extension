@@ -4,6 +4,6 @@ export type ChromeMessage = {
 }
 
 export type ChromeMessageResponse = {
-    text: string;
+    transferSize: number;
   }
   
