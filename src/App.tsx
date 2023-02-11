@@ -83,10 +83,10 @@ export default function App() {
   return (
     <div className="">
       <header className="App-header">
-        {responseFromContent/1000 <100 ? <h3>Yay! Green website</h3> : <h3>Meh! Red website</h3>}
-        <p>Current tab consumed {(responseFromContent/1000)} KB of data which is equivalent to {responseFromContent*0.000000011} g of emissions.</p>
-        <p>Session emissions: {sessionStore*0.000000011} g</p>
-        <p>Total data consumed in this session: {(sessionStore/1000)}KB</p>
+        {responseFromContent/1000 <200 ? <h3>Yay! Green website</h3> : <h3>Meh! Red website</h3>}
+        <p>Current tab consumed {(responseFromContent/1000).toFixed(3)} KB of data which is equivalent to {(responseFromContent*0.000000011).toFixed(3)} g of emissions.</p>
+        <p>Session emissions: {(sessionStore*0.000000011).toFixed(3)} g</p>
+        <p>Total data consumed in this session: {(sessionStore/1000).toFixed(3)}KB</p>
       </header>
     </div>
   );
