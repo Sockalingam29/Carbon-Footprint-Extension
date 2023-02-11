@@ -16,7 +16,8 @@
     "extension_pages": "script-src 'self'; object-src 'self'"
   },
   "permissions": [
-    "activeTab"
+    "activeTab",
+    "storage"
   ],
   "content_scripts": [
     {
