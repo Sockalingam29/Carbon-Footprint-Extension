@@ -19,19 +19,15 @@ function getCookie(cname: string) {
   return "";
 }
 
-let sessionSet = false
-
 export default function App() {
   const [responseFromContent, setResponseFromContent] = React.useState(0);
   // const [sessionStore,setSessionStore]=React.useState(Number(localStorage.getItem('dataConsumed')) || 0 )
-
-  if(getCookie('dataConsumed')==""){
-    document.cookie = "dataConsumed=0";
-  }
-  
-
-  const [sessionStore,setSessionStore]=React.useState(Number(getCookie('dataConsumed')) )
+  if(!localStorage.getItem("dataConsumed")) localStorage.setItem("dataConsumed","0")
+  const [sessionStore,setSessionStore]=React.useState(Number(localStorage.getItem("dataConsumed")) )
   // const [prevSessionStore,setPrevSessionStore]=React.useState(0)
+
+  if(getCookie("cookie")=="") document.cookie = "cookie=0";
+  const [temp,setTemp]=React.useState(Number(getCookie("cookie")))
 
   console.log("curr session "+sessionStore);
 
@@ -57,24 +53,28 @@ export default function App() {
             tabs[0].id || 0,
             { type: "GET_DOM" } as ChromeMessage,
             (response: ChromeMessageResponse) => {
-              console.log(response);
-              let currPageSize = response.transferSize;
-              let totalSize = sessionStore
-              console.log("currPageSize "+currPageSize+" responseFromContent "+responseFromContent)
-              if(!sessionSet && currPageSize!=0){
-              totalSize += currPageSize;
-                sessionSet = true
-            }
 
+              console.log(response);
+
+              let currPageSize = response.transferSize
               setResponseFromContent(currPageSize);
+              console.log("currPageSize "+currPageSize+" responseFromContent "+responseFromContent)
+
+              // let totalSize = sessionStore
+              // totalSize += currPageSize;
+              
+              if(localStorage.getItem(tabs[0].url||"") == null){
+                document.cookie = "cookie="+(temp+currPageSize);
+                localStorage.setItem(tabs[0].url||"",currPageSize.toString())
+                localStorage.setItem("dataConsumed",(sessionStore+currPageSize).toString())
+                setSessionStore(sessionStore+currPageSize);
+                setTemp((prev)=>prev+currPageSize)
+              }
+
               // setPrevSessionStore(currPageSize)
 
-              setSessionStore(totalSize);
-              document.cookie = "dataConsumed="+totalSize;
 
-              console.log("Values "+" "+currPageSize+" "+totalSize);
-              console.log("cookie "+getCookie('dataConsumed'));
-              // chrome.storage?.session?.set({ usedData: totalSize });
+              console.log("Values "+" "+currPageSize);
             }
           );
         }
@@ -86,7 +86,8 @@ export default function App() {
       <header className="App-header">
         {responseFromContent/1000 <100 ? <h3>Yay! Green website</h3> : <h3>Meh! Red website</h3>}
         <p>Current tab consumed {(responseFromContent/1000)} KB of data which is equivalent to {responseFromContent*0.000000011} g of emissions.</p>
-        <p>Session emissions: {sessionStore*0.000000011} g</p>
+        <p>Session consumption: {temp/1000} KB</p>
+        <p>Total emissions: {sessionStore*0.000000011} g</p>
         <p>Total data consumed in this session: {(sessionStore/1000)}KB</p>
       </header>
     </div>
